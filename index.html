@@ -1,0 +1,1070 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="style1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<meta charset="UTF-8">
+<title>Embedded Style Sheet</title>
+<style>
+ 
+</style>
+</head>
+<body  onload="populateDaysOfMonth(populateCalendar); highlightCurrentTime();">
+  <div class="header">
+    <img class="logo" src="static/marko.png" alt="Avatar" width="35" height="35">
+    <h1 class="title">Calendooor</h1>   
+  </div>
+  <div class="calendar_container">
+    <div>
+      <button id="edit_calendar_button">
+        <i class="fa fa-plus" aria-hidden="true"></i> Edit calendar
+      </button>
+    </div>
+    <div class="search_bar_container">
+      <div class="calendar_edit_input">
+        Select staff:
+        <select name="staff" id="staff">
+          <option value="ricky">Ricky</option>
+          <option value="browny">Browny</option>
+          <option value="jon">Jon</option>
+          <option value="mike_son" >Mike Son</option>
+          <option value="fish">Fish</option>
+          <option value="tim_huyhn">Tim Huyhn</option>
+          <option value="marko">Marko</option>
+          <option value="daryl">Daryl</option>
+          <option value="darcy" >Darcy</option>
+          <option value="killian">Killian</option>
+          <option value="harry">Harry</option>
+          <option value="cass">Cass</option>
+          <option value="justen">Justen</option>
+        </select>
+      </div>
+      <div id="first_row" class="calendar_edit_input">
+        Select days:
+        <div id="toggle_days_container">
+          <button class="toggle_days" id="sun_button"data-day-of-week-int="0">
+            Su
+          </button>
+          <button class="toggle_days" id="mon_button"data-day-of-week-int="1">
+            M 
+          </button>
+          <button class="toggle_days" id="tues_button"data-day-of-week-int="2">
+            Tu
+          </button>
+          <button class="toggle_days" id="wed_button" data-day-of-week-int="3">
+            W
+          </button>
+          <button class="toggle_days" id="thurs_button"data-day-of-week-int="4">
+            Th
+          </button>
+          <button class="toggle_days" id="fri_button" data-day-of-week-int="5">
+            F
+          </button>
+          <button class="toggle_days" id="sat_button" data-day-of-week-int="6">
+            S
+          </button>
+        </div>
+        <div class="calendar_edit_input" style="display:none">
+          Select range: 
+          <select name="time_range_options" id="time_range_options">
+            <option value="selected-days-only">Apply to selected days only</option>
+            <option value="selected-days-going-forward">Apply to each selected day going forward</option>
+          </select>
+        </div>
+      </div>
+      <div id="second_row">
+        <div class="calendar_edit_input">
+          Select time-zone:
+          <select name="timezones" id="timezones">
+            <option value="utc+14">(UTC+14:00)</option>
+            <option value="utc+13">(UTC+13:00)</option>
+            <option value="utc+12">(UTC+12:00)</option>
+            <option value="utc+11">(UTC+11:00) Australian Eastern Daylight Time</option>
+            <option value="utc+10">(UTC+10:00)</option>
+            <option value="utc+9">(UTC+09:00)</option>
+            <option value="utc+8">(UTC+08:00) Hong Kong Time</option>
+            <option value="utc+7">(UTC+07:00) Indochina Time</option>
+            <option value="utc+6">(UTC+06:00)</option>
+            <option value="utc+5">(UTC+05:00)</option>
+            <option value="utc+4">(UTC+04:00)</option>
+            <option value="utc+3">(UTC+03:00)</option>
+            <option value="utc+2">(UTC+02:00)</option>
+            <option value="utc+1">(UTC+01:00) Central European Time</option>
+            <option value="utc+0" selected="selected">(UTC+00:00) GMT</option>
+            <option value="utc-1">(UTC-1)</option>
+            <option value="utc-2">(UTC-2)</option>
+            <option value="utc-3">(UTC-3) Brasilia Time</option>
+            <option value="utc-4">(UTC-4)</option>
+            <option value="utc-5">(UTC-5) Eastern Standard Time</option>
+            <option value="utc-6">(UTC-6)</option>
+            <option value="utc-7">(UTC-7) Mountain Standard Time</option>
+            <option value="utc-8">(UTC-8) Pacific Time</option>
+            <option value="utc-9">(UTC-9)</option>
+            <option value="utc-10">(UTC-10) Hawaii Standard Time</option>
+            <option value="utc-11">(UTC-11)</option>
+            <option value="utc-12">(UTC-12)</option>
+          </select>
+        </div>
+        <div class="calendar_edit_input">
+          <label for="start_time"><span>Select start time:</span></label>
+          <input type="time" id="start_time" name="start_time" width="200px"> 
+        </div>
+        <div class="calendar_edit_input">
+          <label for="end_time"><span>Select end time:</span></label>
+          <input type="time" id="end_time" name="end_time" width="200px">      
+        </div>
+        <div id="submit_button_container" class="calendar_edit_input">
+          <button id="submit_button" class="calendar_edit_input">
+            Add to Calendar <i id="loading_wheel"></i>
+          </button>
+        </div>
+        <div id="delete_button_container" class="calendar_edit_input">
+          <button id="delete_button" class="calendar_edit_input">
+            Remove from Calendar <i id="loading_wheel"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="output">
+      <div id="weekly_navigator">
+        <button onclick="toggleWeek(event);" id="left-week-navigate"><i class="fa fa-angle-left" style="font-size:24px"></i></button>
+        <button onclick="toggleWeek(event);" id="right-week-navigate"style="margin-left:4px"><i class="fa fa-angle-right" style="font-size:24px"></i></button>
+        <h1 id="monthDisplay" style="display:inline; margin-left: 10px"></h1>
+        <span id="team-toggle-container">
+          <label for="cs">CS</label>
+          <input type="checkbox" class="squadCheckBox" id="cs" name="cs" onclick="onSquadCheckBoxClick(event)" checked>
+          <label for="listings">Listings</label>
+          <input type="checkbox" class="squadCheckBox" id="listings" name="listings" onclick="onSquadCheckBoxClick(event)" checked>
+          <label for="launchpad">Launchpad</label>
+          <input type="checkbox" class="squadCheckBox" id="launchpad" name="launchpad" onclick="onSquadCheckBoxClick(event)" checked>
+        </span>
+      </div>
+      <table id="staff_calendooor">
+        <tr>
+          <th>UTC</th>
+          <th id="sun_header"><div>Sunday</div><div class="day-of-month"></div></th>
+          <th id="mon_header"><div>Monday</div><div class="day-of-month"></div></th>
+          <th id="tues_header"><div>Tuesday</div><div class="day-of-month"></div></th>
+          <th id="wed_header"><div>Wednesday</div><div class="day-of-month"></div></th>
+          <th id="thurs_header"><div>Thursday</div><div class="day-of-month"></div></th>
+          <th id="fri_header"><div>Friday</div><div class="day-of-month"></div></th>
+          <th id="sat_header"><div>Saturday</div><div class="day-of-month"></div></th>
+        </tr>
+        <tr id="0" class="time_row">
+          <td class="time-display">12AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="1" class="time_row">
+          <td class="time-display">1AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="2"class="time_row">
+          <td class="time-display">2AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="3"class="time_row">
+          <td class="time-display">3AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="4"class="time_row">
+          <td class="time-display">4AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="5"class="time_row">
+          <td class="time-display">5AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="6"class="time_row">
+          <td class="time-display">6AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="7"class="time_row">
+          <td class="time-display">7AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="8"class="time_row">
+          <td class="time-display">8AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="9"class="time_row">
+          <td class="time-display">9AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="10"class="time_row">
+          <td class="time-display">10AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="11"class="time_row">
+          <td class="time-display">11AM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="12"class="time_row">
+          <td class="time-display">12PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="13"class="time_row">
+          <td class="time-display">1PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="14"class="time_row">
+          <td class="time-display">2PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="15"class="time_row">
+          <td class="time-display">3PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="16"class="time_row">
+          <td class="time-display">4PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="17"class="time_row">
+          <td class="time-display">5PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="18"class="time_row">
+          <td class="time-display">6PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="19"class="time_row">
+          <td class="time-display">7PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="20"class="time_row">
+          <td class="time-display">8PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="21"class="time_row">
+          <td class="time-display">9PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="22"class="time_row">
+          <td class="time-display">10PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+        <tr id="23"class="time_row">
+          <td class="time-display">11PM</td>
+          <td class="sun"></td>
+          <td class="mon"></td>
+          <td class="tues"></td>
+          <td class="wed"></td>
+          <td class="thurs"></td>
+          <td class="fri"></td>
+          <td class="sat"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="testshit.js">
+
+</script>
+
+<script type="text/javascript">
+
+const editCalendarButton = document.getElementById("edit_calendar_button");
+editCalendarButton.addEventListener("click", onEditCalendarButtonClick)
+
+function onEditCalendarButtonClick() {
+  if(document.getElementsByClassName("search_bar_container")[0].style.display === "block") {
+    document.getElementsByClassName("search_bar_container")[0].style.display = "none"
+  } else {
+    document.getElementsByClassName("search_bar_container")[0].style.display = "block"
+  }
+}
+
+const submitButton = document.getElementById("submit_button"); 
+submitButton.addEventListener("click", updateSchedule);
+
+const deleteButton = document.getElementById("delete_button"); 
+deleteButton.addEventListener("click", updateSchedule);
+
+function highlightCurrentTime() {
+  const highlightedCell = document.getElementById("highlightedCell")
+  if (highlightedCell != null) {highlightedCell.removeAttribute("style") }
+  const currTime = new Date();
+  const currHour = currTime.getUTCHours();
+  const currDay = currTime.getUTCDay();
+  const currDate = currTime.getUTCDate();
+  const timeRow = document.getElementById(currHour)
+  const currDayHeader = week_map.map[currDay]
+  const dayOfWeek = week_map.map[currDay].split("_")[0]
+  const currCell = timeRow.querySelector(`.${dayOfWeek}`) 
+
+  const dayOfMonthHeader = document.getElementById(currDayHeader)
+  const dayOfMonth = dayOfMonthHeader.querySelector(".day-of-month").innerText
+
+  if(parseInt(dayOfMonth) === currDate) {
+    currCell.style.background = "#FFFF8F"
+    currCell.setAttribute("id", "highlightedCell")
+  }
+}
+
+function onSquadCheckBoxClick(event) {
+  const squadCheckBox = document.getElementById(event.target.id)
+  console.log(squadCheckBox)
+  console.log(squadCheckBox.checked === true)
+  console.log(document.getElementsByClassName(`squad_${squadCheckBox.id}`))
+  if (squadCheckBox.checked === true) {
+    const arrayOfImgs = [...document.getElementsByClassName(`squad_${squadCheckBox.id}`)]
+    
+    arrayOfImgs.forEach(function(staffImg) {
+      staffImg.style.display = "inline-block"
+    })
+  } else {
+    const arrayOfImgs = [...document.getElementsByClassName(`squad_${squadCheckBox.id}`)]
+
+    arrayOfImgs.forEach(function(staffImg) {
+      staffImg.style.display = "none"
+    })    
+  }
+}
+
+function toggleSquadsOnAndOff() {
+  const arraySquadCheckBoxes = [...document.getElementsByClassName("squadCheckBox")]
+  arraySquadCheckBoxes.forEach(function(checkBox){
+    if(checkBox.checked === false) {
+      const arrayOfImgs = [...document.getElementsByClassName(`squad_${checkBox.id}`)]
+
+      arrayOfImgs.forEach(function(staffImg) {
+        staffImg.style.display = "none"
+      })    
+    }
+  }) 
+}
+
+function updateSchedule(event) {
+
+  event.preventDefault();
+
+  const milisecondsIn24Hours = 86400000;
+  const JSDateOnFirstDayOfWeek = parseInt(document.getElementById("monthDisplay").getAttribute("data-first-day-js-time"))
+  const toggledDayArr = []
+
+  const timezone = document.getElementById("timezones").value
+  const timezoneOffset = parseInt(timezone.split("utc")[1])
+  const toggledDays = [...document.getElementsByClassName("day_option_toggled")]
+  const start_time = document.getElementById("start_time").value
+  const start_time_hour = start_time.split(":")[0] - timezoneOffset
+  const start_time_minute = start_time.split(":")[1]
+  const end_time = document.getElementById("end_time").value
+  const end_time_hour = end_time.split(":")[0] - timezoneOffset
+  let end_time_hour_offset_helper = end_time_hour
+  const end_time_minute = end_time.split(":")[1]
+  const tempDayObj = {}
+  const updateAction = event.target.id
+
+  for(i = 0; i < toggledDays.length; i++) {
+    const hoursOfDay = []
+    const dayObj = {}
+    const dayOfWeek = parseInt(toggledDays[i].getAttribute("data-day-of-week-int"))
+
+    // on toggled day
+    const JSDateOntoggledDay = JSDateOnFirstDayOfWeek + (milisecondsIn24Hours * dayOfWeek)
+    const DateOnToggledDay = new Date(JSDateOntoggledDay)
+    // 1 day ago
+    const JSDateDayBefore = JSDateOntoggledDay - milisecondsIn24Hours
+    const dateOnDayBefore = new Date(JSDateDayBefore)
+    // 1 day ahead
+    const JSDateNextDay = JSDateOntoggledDay + milisecondsIn24Hours
+    const dateNextDay = new Date(JSDateNextDay)
+
+    console.log(DateOnToggledDay)
+    dayObj.year = DateOnToggledDay.getUTCFullYear()
+    dayObj.month = DateOnToggledDay.getUTCMonth()
+    dayObj.date = DateOnToggledDay.getUTCDate()
+
+    if (start_time_hour >= 24 && end_time_hour <= start_time_hour) {
+      end_time_hour_offset_helper = 24 + end_time_hour
+    }
+
+    for (let j = start_time_hour; j < end_time_hour_offset_helper; j++) {
+      if(j < 0) {
+        if(!(dateOnDayBefore.getUTCDate() in tempDayObj)) {
+          tempDayObj[dateOnDayBefore.getUTCDate()] = {}
+          tempDayObj[dateOnDayBefore.getUTCDate()].year = dateOnDayBefore.getUTCFullYear()
+          tempDayObj[dateOnDayBefore.getUTCDate()].month = dateOnDayBefore.getUTCMonth()
+          tempDayObj[dateOnDayBefore.getUTCDate()].date = dateOnDayBefore.getUTCDate()
+          tempDayObj[dateOnDayBefore.getUTCDate()].hoursOfDay = []
+          tempDayObj[dateOnDayBefore.getUTCDate()].hoursOfDay.push(24 + j)
+
+        } else {
+          tempDayObj[dateOnDayBefore.getUTCDate()].hoursOfDay.push(24 + j)
+        }
+      }
+      if(j >= 24) {
+        console.log("yoo j >= 24")
+        console.log(dateNextDay.getUTCDate())
+        console.log(dateNextDay.getUTCDate() in tempDayObj)
+        if(!(dateNextDay.getUTCDate() in tempDayObj)) {
+          tempDayObj[dateNextDay.getUTCDate()] = {}
+          tempDayObj[dateNextDay.getUTCDate()].year = dateNextDay.getUTCFullYear()
+          tempDayObj[dateNextDay.getUTCDate()].month = dateNextDay.getUTCMonth()
+          tempDayObj[dateNextDay.getUTCDate()].date = dateNextDay.getUTCDate()
+          tempDayObj[dateNextDay.getUTCDate()].hoursOfDay = []
+          tempDayObj[dateNextDay.getUTCDate()].hoursOfDay.push(j - 24)
+        } else {
+          tempDayObj[dateNextDay.getUTCDate()].hoursOfDay.push(j - 24)
+        }
+      } 
+      if (j >= 0 && j < 24) {
+        if(!(DateOnToggledDay.getUTCDate() in tempDayObj)) {
+          tempDayObj[DateOnToggledDay.getUTCDate()] = {}
+          tempDayObj[DateOnToggledDay.getUTCDate()].year = DateOnToggledDay.getUTCFullYear()
+          tempDayObj[DateOnToggledDay.getUTCDate()].month = DateOnToggledDay.getUTCMonth()
+          tempDayObj[DateOnToggledDay.getUTCDate()].date = DateOnToggledDay.getUTCDate()
+          tempDayObj[DateOnToggledDay.getUTCDate()].hoursOfDay = []
+          tempDayObj[DateOnToggledDay.getUTCDate()].hoursOfDay.push(j)
+        } else {
+          tempDayObj[DateOnToggledDay.getUTCDate()].hoursOfDay.push(j)
+        }
+      }
+    }
+  }
+
+  console.log(tempDayObj)
+  for (const day in tempDayObj) {
+    toggledDayArr.push(tempDayObj[day]);
+  }
+  console.log(toggledDayArr);
+  
+  const staff = document.getElementById("staff").value
+  const days = [...document.getElementsByClassName("day_option_toggled")].map(elem => elem.id)
+  const applyChangesTo = document.getElementById("time_range_options").value
+
+  const body = {
+    staff: staff,
+    action: updateAction,
+    timezone: timezone,
+    start_time_hour: start_time_hour,
+    start_time_minute: start_time_minute,
+    end_time_hour: end_time_hour,
+    end_time_minute: end_time_minute,  
+    days: days,
+    applyChangesTo: applyChangesTo,
+    toggledDays: toggledDayArr
+  }
+
+  console.log(body)
+  console.log(typeof body)
+
+  const requestOptions = {
+    method: 'POST',
+    headers: { 
+        'Content-Type': 'application/json'
+    },
+    mode: "cors",
+    body: JSON.stringify(body)
+  };
+
+  var url = "https://detectooor.herokuapp.com/calendooor/addtime"
+
+  fetch(url, requestOptions)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      populateCalendar()
+    })
+
+}
+
+
+const daySelector = document.getElementsByClassName("toggle_days");
+
+for (i = 0; i < daySelector.length; i++) {
+  daySelector[i].addEventListener("click", onClickDaySelector)
+  console.log(daySelector[i]);
+}
+
+function onClickDaySelector(e) {
+  console.log(e.target.id)
+  console.log(e.target.classList[1])
+  if (e.target.classList[1] === "day_option_toggled") {
+    e.target.classList.remove('day_option_toggled')
+  } else if (e.target.classList[1] != "day_option_toggled") {
+    e.target.classList.add("day_option_toggled")
+  }
+}
+
+const squadObject = {
+  listings: ["darcy", "daryl", "killian", "cass", "harry", "justen"],
+  cs: ["browny", "marko", "jon", "ricky"],
+  launchpad: [],
+  customer_engineering: ["fish"]
+}
+
+const week_map = {
+  map: {
+    0: "sun_header",
+    1: "mon_header",
+    2: "tues_header",
+    3: "wed_header",
+    4: "thurs_header",
+    5: "fri_header",
+    6: "sat_header"
+  }
+}
+
+let calendar = {
+  numToStringMap: {
+    0: ["jan", "January"],
+    1: ["feb", "February"],
+    2: ["mar", "March"],
+    3: ["apr", "April"],
+    4: ["may", "May"],
+    5: ["jun", "June"],
+    6: ["jul", "July"],
+    7: ["aug", "August"],
+    8: ["sep", "September"],
+    9: ["oct", "October"],
+    10: ["nov", "November"],
+    11: ["dec", "December"]
+  },
+  stringToNumMap: {
+    jan: 0,
+    feb: 1,
+    mar: 2,
+    apr: 3,
+    may: 4,
+    jun: 5,
+    july: 6,
+    aug: 7,
+    sep: 8,
+    oct: 9,
+    nov: 10,
+    dec: 11
+  },
+  2022: {
+    11: {
+      last_day: 31,
+      prev_month: 11,
+      next_month: 1
+    },
+  },
+  2023: {
+    0: {
+      last_day: 31,
+      prev_month: 11,
+      next_month: 1
+    },
+    1: {
+      last_day: 28,
+      prev_month: 0,
+      next_month: 2
+    },
+    2: {
+      last_day: 31,
+      prev_month: 1,
+      next_month: 3
+    },
+    3: {
+      last_day: 30,
+      prev_month: 2,
+      next_month: 4
+    },
+    4: {
+      last_day: 31,
+      prev_month: 3,
+      next_month: 5
+    },
+    5: {
+      last_day: 30,
+      prev_month: 4,
+      next_month: 6
+    },
+    6: {
+      last_day: 31,
+      prev_month: 5,
+      next_month: 7
+    },
+    7: {
+      last_day: 31,
+      prev_month: 6,
+      next_month: 8
+    },
+    8: {
+      last_day: 30,
+      prev_month: 7,
+      next_month: 9
+    },
+    9: {
+      last_day: 31,
+      prev_month: 8,
+      next_month: 10
+    },
+    10: {
+      last_day: 30,
+      prev_month: 9,
+      next_month: 11
+    },
+    11: {
+      last_day: 31,
+      prev_month: 10,
+      next_month: 0
+    }
+  },
+  2024: {
+    0: {
+      last_day: 31,
+      prev_month: 9,
+      next_month: 11
+    },
+  },
+
+  JAN: {
+    8: {},
+    9: {},
+    10: {},
+    11: {},
+    12: {},
+    13: {},
+    14: {}
+  },
+  FEB: {},
+  MAR: {},
+  JUNE: {},
+}
+
+const curr_timezone_offset = 11
+
+const correctTime = (time) => {
+  if(time > 24) {
+    return time - 24
+  } else if(time < 0) {
+    return time + 24
+  } else {
+    return time 
+  }
+}
+
+const populateCalendar = async () => {
+
+  // const milisecondsIn24Hours = 86400000
+  // const currentJSTime = Date.now()
+  // const firstDateOfWeekJSTime = currentJSTime - (milisecondsIn24Hours * dayOfWeek)
+  const JSDateOnFirstDayOfWeek = document.getElementById("monthDisplay").getAttribute("data-first-day-js-time")
+
+  var url = `https://detectooor.herokuapp.com/calendooor/${JSDateOnFirstDayOfWeek}`
+
+  const res = await fetch(url)
+
+  const schedule = await res.json()
+  console.log(schedule)
+
+  const numToStringMap = {
+    0: "sun",
+    1: "mon",
+    2: "tues",
+    3: "wed",
+    4: "thurs",
+    5: "fri",
+    6: "sat"
+  }
+
+  const allImgElems = [...document.getElementsByClassName("staff_img")]
+  
+  allImgElems.forEach(function(element) {
+        element.remove();
+  })
+
+  for (let i = 0; i < schedule.length; i++) {
+
+    if(Object.keys(schedule[i]).length != 0) {
+      const hoursOnThisDay = [...document.getElementsByClassName(`${numToStringMap[i]}`)]
+      console.log(hoursOnThisDay)
+      for(let j = 0; j < hoursOnThisDay.length; j++) {
+        console.log(hoursOnThisDay[j].parentElement.id)
+        console.log(Object.keys(schedule[i]).length)
+
+        console.log(hoursOnThisDay[j].parentElement.id)
+        console.log(schedule[i].hoursOfDay[hoursOnThisDay[j].parentElement.id])
+        Object.keys(schedule[i].hoursOfDay[hoursOnThisDay[j].parentElement.id]).forEach(function(staff) {
+          const img = document.createElement("IMG")
+          img.setAttribute("src", `static/${staff}.png`)
+          img.setAttribute("class", "staff_img")
+          img.classList.add(`${staff}`)
+          for(const squad in squadObject) {
+            if(squadObject[squad].includes(staff)) {
+              img.classList.add(`squad_${squad}`)
+            }
+          }
+          hoursOnThisDay[j].appendChild(img);
+        })
+      }     
+    }
+  }
+  toggleSquadsOnAndOff()
+}
+
+const removeDaysOff = (scheduleObj) => {
+  console.log("calling removeDaysOff()")
+  console.log("scheduleObj", scheduleObj)
+  for (const staff in scheduleObj) {
+    console.log(staff)
+    for (const daysOff in scheduleObj[staff].off_days) {
+      for (var i = 0; i < scheduleObj[staff].off_days[daysOff].length; i++) {
+      console.log(`${staff} staff member off days`, scheduleObj[staff].off_days)
+
+      var weekdayArray = document.getElementsByClassName(scheduleObj[staff].off_days[daysOff][i])
+
+      console.log("array of weekdays", weekdayArray)
+
+      for (var j = 0; j < weekdayArray.length; j++) {
+        if(i == 0) {
+          if(weekdayArray[j].parentElement.id >= scheduleObj[staff].utc_day_start && weekdayArray[j].querySelector(`.${staff}`) != null) {
+            console.log("time", weekdayArray[j].parentElement.id)
+            console.log(`utc start date for ${staff}`, scheduleObj[staff].utc_day_start)
+            weekdayArray[j].removeChild(weekdayArray[j].querySelector(`.${staff}`))
+            console.log(`img for ${staff}`, weekdayArray[j].querySelector(`.${staff}`))
+          }
+        } else if (i == 1) {
+          if(weekdayArray[j].parentElement.id < scheduleObj[staff].utc_day_start && weekdayArray[j].querySelector(`.${staff}`) != null) {
+            weekdayArray[j].removeChild(weekdayArray[j].querySelector(`.${staff}`))
+          }
+        }
+      }
+    }
+    }
+  }
+}
+
+function populateDaysOfMonth(callback, dateParam = new Date(), JSTimeParam = Date.now()) {
+  document.getElementById("monthDisplay").innerText = ""
+  const daysOfMonthArray = [...document.getElementsByClassName("day-of-month")]
+  daysOfMonthArray.forEach((elem) => { elem.innerText = "" })
+
+  const milisecondsInHour = 86400000;
+
+    const date = dateParam
+    const currentJSTime = JSTimeParam
+    console.log(date.getUTCDay());
+
+    const currentYear = date.getUTCFullYear(); //2023
+    const prevYear = currentYear - 1;
+    const nextYear = currentYear + 1;
+    const currentMonth = date.getUTCMonth(); //0
+    const prevMonth = calendar[currentYear][currentMonth].prev_month
+    const dayOfWeek = date.getUTCDay(); //2
+    const dateOfMonth = date.getUTCDate(); //31
+    const lastDayOfCurrentMonth = calendar[currentYear][currentMonth].last_day
+
+    const firstDateOfWeekJSTime = currentJSTime - (milisecondsInHour * dayOfWeek)
+    const firstDateOfWeek = new Date(firstDateOfWeekJSTime);
+    const monthOnFirstDayOfWeek = firstDateOfWeek.getUTCMonth()
+    const yearOnFirstDayOfWeek = firstDateOfWeek.getUTCFullYear();
+
+    const lastDateOfWeekJSTime = currentJSTime + (milisecondsInHour * (6 - dayOfWeek))
+    const lastDateOfWeek = new Date(lastDateOfWeekJSTime);
+    const monthOnLastDayOfWeek = lastDateOfWeek.getUTCMonth()
+    const yearOnLastDayOfWeek = lastDateOfWeek.getUTCFullYear();
+
+    const monthDisplayHolder = document.getElementById("monthDisplay")
+    let monthDisplay = 
+      monthOnFirstDayOfWeek === monthOnLastDayOfWeek ? 
+        document.createTextNode(`${calendar.numToStringMap[monthOnFirstDayOfWeek][1]} ${yearOnFirstDayOfWeek}`) :
+        document.createTextNode(`${calendar.numToStringMap[monthOnFirstDayOfWeek][1]} ${yearOnFirstDayOfWeek} - ${calendar.numToStringMap[monthOnLastDayOfWeek][1]} ${yearOnLastDayOfWeek}`)
+    
+    monthDisplayHolder.setAttribute("data-first-day-month", `${monthOnFirstDayOfWeek}`)
+    monthDisplayHolder.setAttribute("data-first-day-year", `${yearOnFirstDayOfWeek}`)
+    monthDisplayHolder.setAttribute("data-last-day-month", `${monthOnLastDayOfWeek}`)
+    monthDisplayHolder.setAttribute("data-last-day-year", `${yearOnLastDayOfWeek}`)
+
+    const firstDaymilisecondsDelta = milisecondsInHour * (dayOfWeek - 0)
+    const JSTimeOnFirstDayOfWeek = currentJSTime - firstDaymilisecondsDelta
+
+    monthDisplayHolder.setAttribute("data-first-day-js-time", `${JSTimeOnFirstDayOfWeek}`)
+
+    const lastDaymilisecondsDelta = milisecondsInHour * (6 - dayOfWeek)
+    const JSTimeOnLastDayOfWeek = currentJSTime + lastDaymilisecondsDelta
+    monthDisplayHolder.setAttribute("data-last-day-js-time", `${JSTimeOnLastDayOfWeek}`)
+
+    monthDisplayHolder.appendChild(monthDisplay)
+
+
+
+    const dayToDateMap = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+      }
+
+    for (const day in dayToDateMap) {
+      if(parseInt(day) <= dayOfWeek) {
+        const milisecondsDelta = milisecondsInHour * (dayOfWeek - parseInt(day))
+        const JSTimeOnThisDay = currentJSTime - milisecondsDelta
+        const timeOnThisDay = new Date(JSTimeOnThisDay)
+        const dateOnThisDay = timeOnThisDay.getUTCDate()
+        
+        dayToDateMap[day] = dateOnThisDay
+      } else if (parseInt(day) > dayOfWeek) {
+        const milisecondsDelta = milisecondsInHour * (parseInt(day) - dayOfWeek)
+        const JSTimeOnThisDay = currentJSTime + milisecondsDelta
+        const timeOnThisDay = new Date(JSTimeOnThisDay)
+        const dateOnThisDay = timeOnThisDay.getUTCDate()
+        
+        dayToDateMap[day] = dateOnThisDay        
+      }
+    }
+
+    monthDisplayHolder.setAttribute("data-first-day-date", `${dayToDateMap[0]}`)
+    monthDisplayHolder.setAttribute("data-last-day-date", `${dayToDateMap[6]}`)
+
+    for (const day in dayToDateMap) {
+      const dayOfWeek = document.getElementById(week_map.map[day])
+      const dayOfMonthDiv = dayOfWeek.querySelector(".day-of-month")
+      dayOfMonthDiv.innerText = `${dayToDateMap[day]}`
+    }
+    highlightCurrentTime()
+    callback();
+}
+
+const toggleWeek = (e) => {
+
+  const allImgs = [...document.getElementsByClassName("staff_img")]
+  allImgs.forEach(img => img.remove())
+
+  const milisecondsin24Hours = 86400000;
+  console.log(e);
+  console.log(e.target)
+  console.log(e.target.id)
+
+  let id = e.target.id
+
+  console.log("id", id)
+
+  if(e.target.id != "right-week-navigate" && e.target.id != "left-week-navigate") {
+    id = e.target.parentElement.id
+  }
+
+  if(id === "right-week-navigate") {
+    const lastDayOfWeek = document.getElementById("sat_header")
+    console.log(lastDayOfWeek)
+    let currentWeekLastDay = lastDayOfWeek.querySelector(".day-of-month")
+    console.log(currentWeekLastDay)
+    console.log(currentWeekLastDay.textContent)
+    currentWeekLastDay = currentWeekLastDay.textContent
+    currentWeekLastDay = parseInt(currentWeekLastDay)
+
+    const monthDisplayHolder = document.getElementById("monthDisplay")
+
+    const jsTimeLastDayString = monthDisplayHolder.getAttribute("data-last-day-js-time")
+    const jsTimeLastDay = parseInt(jsTimeLastDayString)
+    const jsTimeOneDayAhead = jsTimeLastDay + milisecondsin24Hours 
+    const dateOneDayAhead = new Date(jsTimeOneDayAhead)
+
+    populateDaysOfMonth(populateCalendar, dateOneDayAhead, jsTimeOneDayAhead)
+
+  } else if (id === "left-week-navigate") {
+    const firstDayOfWeek = document.getElementById("sun_header")
+    let currentWeekFirstDay = firstDayOfWeek.querySelector(".day-of-month")
+    currentWeekFirstDay = currentWeekFirstDay.textContent
+    currentWeekFirstDay = parseInt(currentWeekFirstDay)
+
+    const monthDisplayHolder = document.getElementById("monthDisplay")
+    const firstDayDate = monthDisplayHolder.getAttribute("data-first-day-date")
+
+    const jsTimeFirstDayString = monthDisplayHolder.getAttribute("data-first-day-js-time")
+    const jsTimeFirstDay = parseInt(jsTimeFirstDayString)
+    const jsTimeOneDayAgo = jsTimeFirstDay - milisecondsin24Hours 
+    const dateOneDayAgo = new Date(jsTimeOneDayAgo)
+
+
+    populateDaysOfMonth(populateCalendar, dateOneDayAgo, jsTimeOneDayAgo)
+  }
+}
+
+function switchToLocalTimeZone() {
+  const localTimeDate = new Date();
+  const UTCOffSetMinutes = localTimeDate.getTimezoneOffset()
+  const UTCOffSetHours = UTCOffSetMinutes / 60
+
+  const arrayOfTimes = [...document.getElementsByClassName("time_row")]
+
+  arrayOfTimes.forEach(function(tr) {
+    let local24HourTime = parseInt(tr.id) - UTCOffSetHours
+
+    if(local24HourTime > 23) {
+      local24HourTime = local24HourTime - 24
+    }
+    else if (local24HourTime < 0) {
+      local24HourTime = 24 + local24HourTime 
+    } 
+
+    const timeString24Hour = `${local24HourTime}:00`
+
+    tr.querySelector(".time-display").innerText = timeString24Hour   
+  })
+
+}
+
+/**
+const populateCalendar = (scheduleObj) => {
+
+console.log(scheduleObj)
+
+  for (const time in scheduleObj[staff]) {
+    console.log(time)
+    if (scheduleObj[day][time] == true) {
+      const row = document.getElementById(`${time}`)
+      console.log(row);
+      const cell = row.getElementsByClassName(`${day}`)
+      console.log(cell)
+      const img = document.createElement("IMG")
+      img.setAttribute("src", "static/thugraffes_logo.png")
+      img.setAttribute("class", "staff_img")
+      const text = document.createTextNode("yooo")
+      cell[0].appendChild(img);
+    }
+  }
+}
+**/
+
+// if > 24, subtract 24 from number 
+// if < 0, add 24 to number 
+
+
+</script>
+</html>
