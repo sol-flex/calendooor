@@ -78,6 +78,7 @@ img {
    align-items:center;
    margin-bottom: 10px;
    margin-top: 10px;
+   position:relative;
 }
 
 .logo {
@@ -165,12 +166,17 @@ hr.curr_time {
   top: 0.5em;
 }
 
-#team-toggle-container {
-  bottom: 0;
-  right:0;
-  position:absolute;
-  right: 0;
-  bottom:0;
+#options_container {
+  float:right;
+}
+
+#selected_timezone {
+  margin-left:6px;
+  width: 200px;
+}
+
+#toggle_days_container {
+float:right;
 }
 
 select {
@@ -233,9 +239,5 @@ input[type=time] {
 }
 
 #end_time {
-  float:right;
-}
-
-#toggle_days_container {
   float:right;
 }

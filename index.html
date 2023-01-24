@@ -131,18 +131,49 @@
         <button onclick="toggleWeek(event);" id="left-week-navigate"><i class="fa fa-angle-left" style="font-size:24px"></i></button>
         <button onclick="toggleWeek(event);" id="right-week-navigate"style="margin-left:4px"><i class="fa fa-angle-right" style="font-size:24px"></i></button>
         <h1 id="monthDisplay" style="display:inline; margin-left: 10px"></h1>
-        <span id="team-toggle-container">
-          <label for="cs">CS</label>
-          <input type="checkbox" class="squadCheckBox" id="cs" name="cs" onclick="onSquadCheckBoxClick(event)" checked>
-          <label for="listings">Listings</label>
-          <input type="checkbox" class="squadCheckBox" id="listings" name="listings" onclick="onSquadCheckBoxClick(event)" checked>
-          <label for="launchpad">Launchpad</label>
-          <input type="checkbox" class="squadCheckBox" id="launchpad" name="launchpad" onclick="onSquadCheckBoxClick(event)" checked>
+        <span id="options_container" display="inline">
+          <span id="team-toggle-container">
+            <label for="cs">CS</label>
+            <input type="checkbox" class="squadCheckBox" id="cs" name="cs" onclick="onSquadCheckBoxClick(event)" checked>
+            <label for="listings">Listings</label>
+            <input type="checkbox" class="squadCheckBox" id="listings" name="listings" onclick="onSquadCheckBoxClick(event)" checked>
+            <label for="launchpad">Launchpad</label>
+            <input type="checkbox" class="squadCheckBox" id="launchpad" name="launchpad" onclick="onSquadCheckBoxClick(event)" checked>
+          </span>
+          <select name="selected_timezone" id="selected_timezone">
+            <option value="utc+14">(+14:00)</option>
+            <option value="utc+13">(+13:00)</option>
+            <option value="utc+12">(+12:00)</option>
+            <option value="utc+11">(+11:00) Melbourne, AEDT</option>
+            <option value="utc+10">(+10:00)</option>
+            <option value="utc+9">(+09:00)</option>
+            <option value="utc+8">(+08:00) Hong Kong, HKT</option>
+            <option value="utc+7">(+07:00) Bangkok, ICT</option>
+            <option value="utc+6">(+06:00)</option>
+            <option value="utc+5">(+05:00)</option>
+            <option value="utc+4">(+04:00)</option>
+            <option value="utc+3">(+03:00)</option>
+            <option value="utc+2">(+02:00)</option>
+            <option value="utc+1">(+01:00) Zagreb, CET</option>
+            <option value="utc+0" selected="selected">(+00:00) London, GMT</option>
+            <option value="utc-1">(-01:00)</option>
+            <option value="utc-2">(-02:00)</option>
+            <option value="utc-3">(-03:00) Rio De Janiero, BRT</option>
+            <option value="utc-4">(-04:00)</option>
+            <option value="utc-5">(-05:00) Boston, EST</option>
+            <option value="utc-6">(-06:00)</option>
+            <option value="utc-7">(-07:00) Calgary, MST</option>
+            <option value="utc-8">(-08:00) San Francisco, PST</option>
+            <option value="utc-9">(-09:00)</option>
+            <option value="utc-10">(-10:00) Honolulu, HST</option>
+            <option value="utc-11">(-11:00)</option>
+            <option value="utc-12">(-12:00)</option>
+          </select>
         </span>
       </div>
       <table id="staff_calendooor">
         <tr>
-          <th>UTC</th>
+          <th id="timezone_display">UTC</th>
           <th id="sun_header"><div>Sunday</div><div class="day-of-month"></div></th>
           <th id="mon_header"><div>Monday</div><div class="day-of-month"></div></th>
           <th id="tues_header"><div>Tuesday</div><div class="day-of-month"></div></th>
@@ -418,10 +449,29 @@ submitButton.addEventListener("click", updateSchedule);
 const deleteButton = document.getElementById("delete_button"); 
 deleteButton.addEventListener("click", updateSchedule);
 
+const timezoneToggle = document.getElementById("selected_timezone")
+timezoneToggle.addEventListener("change", populateCalendar);
+timezoneToggle.addEventListener("change", highlightCurrentTime);
+
 function highlightCurrentTime() {
+  const timeZoneDisplay = document.getElementById("timezone_display")
+  const selectedTimeZone = document.getElementById("selected_timezone")
+  timeZoneDisplay.innerText = document.getElementById("selected_timezone").options[selectedTimeZone.selectedIndex].text.split(",")[1]
+
+
+  const milisecondsInHour = 3600000
   const highlightedCell = document.getElementById("highlightedCell")
-  if (highlightedCell != null) {highlightedCell.removeAttribute("style") }
-  const currTime = new Date();
+  if (highlightedCell != null) {
+    highlightedCell.removeAttribute("style")
+    highlightedCell.removeAttribute("id")
+  }
+  let currTime = new Date();
+  const currTimeJS = currTime.getTime()
+
+  const timeZoneOffset = parseInt(document.getElementById("selected_timezone").value.split("utc")[1])
+
+  currTime = new Date(currTimeJS + (milisecondsInHour * timeZoneOffset))
+
   const currHour = currTime.getUTCHours();
   const currDay = currTime.getUTCDay();
   const currDate = currTime.getUTCDate();
@@ -596,7 +646,7 @@ function updateSchedule(event) {
     body: JSON.stringify(body)
   };
 
-  var url = "https://detectooor.herokuapp.com/calendooor/addtime"
+  var url = "http://localhost:5000/calendooor/addtime"
 
   fetch(url, requestOptions)
     .then(res => res.json())
@@ -776,19 +826,78 @@ const correctTime = (time) => {
   }
 }
 
-const populateCalendar = async () => {
+async function populateCalendar() {
 
   // const milisecondsIn24Hours = 86400000
   // const currentJSTime = Date.now()
   // const firstDateOfWeekJSTime = currentJSTime - (milisecondsIn24Hours * dayOfWeek)
   const JSDateOnFirstDayOfWeek = document.getElementById("monthDisplay").getAttribute("data-first-day-js-time")
 
-  var url = `https://detectooor.herokuapp.com/calendooor/${JSDateOnFirstDayOfWeek}`
+  var url = `http://localhost:5000/calendooor/${JSDateOnFirstDayOfWeek}`
 
   const res = await fetch(url)
 
-  const schedule = await res.json()
+  let schedule = await res.json()
   console.log(schedule)
+
+  const selectedTimeZoneOffset = parseInt(document.getElementById("selected_timezone").value.split("utc")[1])
+
+
+
+  let tempSched = []
+
+  if (selectedTimeZoneOffset === 0) {
+    schedule.pop()
+    schedule.shift()
+    console.log(schedule)
+
+  } else if (selectedTimeZoneOffset > 0) {
+    for(let i = 0; i < 7; i++ ) {
+
+      const tempObj = {
+        hoursOfDay: {}
+      }
+
+      for(let j = 0; j < 24; j++) {
+        console.log("entered for loop")
+        if(j < selectedTimeZoneOffset) {
+          console.log("timezone offset", selectedTimeZoneOffset)
+          Object.keys(schedule[i]).length === 0 ? tempObj.hoursOfDay[j] = {} : tempObj.hoursOfDay[j] = schedule[i].hoursOfDay[24 + j - selectedTimeZoneOffset]
+        } else {
+          Object.keys(schedule[i + 1]).length === 0 ? tempObj.hoursOfDay[j] = {} : tempObj.hoursOfDay[j] = schedule[i + 1].hoursOfDay[j - selectedTimeZoneOffset]
+        }
+      }
+
+      tempSched.push(tempObj);
+    }
+
+    schedule = tempSched
+    console.log(schedule)
+
+  } else if (selectedTimeZoneOffset < 0) {
+    for(let i = 0; i < 7; i++ ) {
+
+      const tempObj = {
+        hoursOfDay: {}
+      }
+
+      for(let j = 0; j < 24; j++) {
+        console.log("entered for loop", j)
+        if(j >= 24 + selectedTimeZoneOffset) {
+          Object.keys(schedule[i + 2]).length === 0 ? tempObj.hoursOfDay[j] = {} : tempObj.hoursOfDay[j] = schedule[i + 2].hoursOfDay[(j - selectedTimeZoneOffset) - 24]
+        } else if (j < 24 + selectedTimeZoneOffset){
+          Object.keys(schedule[i + 1]).length === 0 ? tempObj.hoursOfDay[j] = {} : tempObj.hoursOfDay[j] = schedule[i + 1].hoursOfDay[j - selectedTimeZoneOffset]
+        }
+      }
+
+      tempSched.push(tempObj);
+
+    }
+
+    schedule = tempSched
+    console.log(schedule)
+  }
+
 
   const numToStringMap = {
     0: "sun",
