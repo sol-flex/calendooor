@@ -646,7 +646,7 @@ function updateSchedule(event) {
     body: JSON.stringify(body)
   };
 
-  var url = "http://localhost:5000/calendooor/addtime"
+  var url = "https://detectooor.herokuapp.com/calendooor/addtime"
 
   fetch(url, requestOptions)
     .then(res => res.json())
@@ -833,7 +833,7 @@ async function populateCalendar() {
   // const firstDateOfWeekJSTime = currentJSTime - (milisecondsIn24Hours * dayOfWeek)
   const JSDateOnFirstDayOfWeek = document.getElementById("monthDisplay").getAttribute("data-first-day-js-time")
 
-  var url = `http://localhost:5000/calendooor/${JSDateOnFirstDayOfWeek}`
+  var url = `https://detectooor.herokuapp.com/calendooor/${JSDateOnFirstDayOfWeek}`
 
   const res = await fetch(url)
 
